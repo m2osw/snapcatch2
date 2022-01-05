@@ -1,4 +1,4 @@
-Source: snapcatch3
+Source: snapcatch2
 Priority: extra
 Maintainer: R. Douglas Barbieri <doug@dooglio.net>
 Build-Depends: cmake,
@@ -6,27 +6,27 @@ Build-Depends: cmake,
     snapcmakemodules (>= 1.0.35.3~bionic)
 Standards-Version: 3.9.4
 Section: devel
-Homepage: https://github.com/catchorg/Catch3
-Bugs: https://github.com/catchorg/Catch3/issues
+Homepage: https://github.com/catchorg/Catch2
+Bugs: https://github.com/catchorg/Catch2/issues
 Origin: Made to Order Software Corporation
 Vcs-Git: https://github.com/m2osw/snapcpp.git
-Vcs-Browser: https://github.com/m2osw/snapcatch3
+Vcs-Browser: https://github.com/m2osw/snapcatch2
 
-Package: snapcatch3
+Package: snapcatch2
 Section: devel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: A modern C++ test framework for unit-tests, TDD and BDD.
  A modern, C++-native, header-only, test framework for unit-tests, TDD
  and BDD - using C++11, C++14, C++17 and later (or C++03 on the Catch1.x
- branch--this package is only for the Catch3.x branch, though).
+ branch--this package is only for the Catch2.x branch, though).
 
-Package: snapcatch3-doc
+Package: snapcatch2-doc
 Section: doc
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Suggests: snapcatch3
+Suggests: snapcatch2
 Description: A modern C++ test framework for unit-tests, TDD and BDD.
- The documentation about the catch3 environment.
+ The documentation about the catch2 environment.
 
 # vim: ts=4 sw=4 et

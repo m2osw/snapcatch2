@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: snapcatch3
-Source: https://github.com/m2osw/snapcatch3
+Upstream-Name: snapcatch2
+Source: https://github.com/m2osw/snapcatch2
 
 Files: *
 Copyright: 2006-2022 Made to Order Software Corp. <contact@m2osw.com>
@@ -25,7 +25,7 @@ License: MIT
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 
-Files: catch3-*.tar.gz
+Files: catch2-*.tar.gz
 Copyright: Copyright (c) 2019-2022 Two Blue Cubes Ltd. All rights reserved.
 License: Boost Software License - Version 1.0 - August 17th, 2003
  Permission is hereby granted, free of charge, to any person or organization

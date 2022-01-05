@@ -1,4 +1,5 @@
-usr/include                           usr
-usr/lib                               usr
+usr/include                           usr/
+usr/lib                               usr/
 usr/share/pkgconfig                   usr/share/
-usr/share/Catch3                      usr/share/
+usr/share/Catch2                      usr/share/
+usr/share/cmake                       usr/share/

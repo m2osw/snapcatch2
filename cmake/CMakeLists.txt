@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2022  Made to Order Software Corp.  All Rights Reserved
 #
-# https://snapwebsites.org/project/snapcatch3
+# https://snapwebsites.org/project/snapcatch2
 # contact@m2osw.com
 #
 # This program is free software; you can redistribute it and/or modify
@@ -17,14 +17,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-project(snapcatch3_cmake)
+project(snapcatch2_cmake)
 
 install(
     FILES
-        SnapCatch3Config.cmake
+        SnapCatch2Config.cmake
 
     DESTINATION
-        share/cmake/SnapCatch3
+        share/cmake/SnapCatch2
 )
 
 # vim: ts=4 sw=4 et nocindent

@@ -1,6 +1,6 @@
 # Copyright (c) 2006-2022  Made to Order Software Corp.  All Rights Reserved.
 #
-# https://snapwebsites.org/project/snapcatch3
+# https://snapwebsites.org/project/snapcatch2
 # contact@m2osw.com
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -19,42 +19,41 @@
 
 cmake_minimum_required(VERSION 3.10.2)
 
-project(snapcatch3)
+project(snapcatch2)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 find_package(SnapCMakeModules REQUIRED)
 
-SnapGetVersion(SNAPCATCH3 ${CMAKE_CURRENT_SOURCE_DIR})
+SnapGetVersion(SNAPCATCH2 ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(SNAPCATCH3_VERSION ${SNAPCATCH3_VERSION_MAJOR}.${SNAPCATCH3_VERSION_MINOR}.${SNAPCATCH3_VERSION_PATCH})
-set(OUTPUT_PATH ${CMAKE_BINARY_DIR}/Catch3-${SNAPCATCH3_VERSION})
+set(SNAPCATCH2_VERSION "${SNAPCATCH2_VERSION_MAJOR}.${SNAPCATCH2_VERSION_MINOR}.${SNAPCATCH2_VERSION_PATCH}")
+set(OUTPUT_PATH ${CMAKE_BINARY_DIR}/Catch2-${SNAPCATCH2_VERSION})
 
-message("CMAKE_INSTALL_LIBDIR = ${CMAKE_INSTALL_LIBDIR}")
 
 # The copy of the cmake folder is for developers; as far as the package is
-# concerned, the "normal" location (as choosen by Catch3/CMake/LinuxGNU) is
-# used as expected (and it changed between drastically between 16.04 & 18.04)
+# concerned, the "normal" location (as choosen by Catch2/CMake/LinuxGNU) is
+# used as expected (and it changed drastically between 16.04 & 18.04)
 # If that becomes an issue in the future, we may instead have to add another
 # search path to look for cmake files under dist/lib/cmake
 #    COMMAND if test -d ${OUTPUT_PATH}/out/lib/*-linux-gnu/cmake\; then cp -r ${OUTPUT_PATH}/out/lib/*-linux-gnu/cmake ${OUTPUT_PATH}/out/share/.\; fi
 #
 add_custom_command(
-    OUTPUT ${OUTPUT_PATH}/out/include/catch3/catch.hpp
+    OUTPUT ${OUTPUT_PATH}/out/include/catch2/catch_all.hpp
     COMMAND echo "------------ sub-cmake call in `pwd` -- ${CMAKE_INSTALL_PREFIX}"
     COMMAND rm -rf ${OUTPUT_PATH}
-    COMMAND tar xf ${CMAKE_SOURCE_DIR}/catch3-${SNAPCATCH3_VERSION}.tar.gz
-    COMMAND if test -f ${CMAKE_SOURCE_DIR}/Catch3-${SNAPCATCH3_VERSION}.patch\; then patch ${OUTPUT_PATH}/projects/CMakeLists.txt <${CMAKE_SOURCE_DIR}/Catch3-${SNAPCATCH3_VERSION}.patch\; fi
+    COMMAND tar xf ${CMAKE_SOURCE_DIR}/catch2-${SNAPCATCH2_VERSION}.tar.gz
+    COMMAND if test -f ${CMAKE_SOURCE_DIR}/Catch2-${SNAPCATCH2_VERSION}.patch\; then patch ${OUTPUT_PATH}/projects/CMakeLists.txt <${CMAKE_SOURCE_DIR}/Catch2-${SNAPCATCH2_VERSION}.patch\; fi
     COMMAND mkdir -p ${OUTPUT_PATH}/out
     COMMAND mkdir -p ${OUTPUT_PATH}/projects/Generated
-    COMMAND cd ${OUTPUT_PATH}/projects/Generated && ${CMAKE_COMMAND} -DCATCH_BUILD_TESTING=off -DCATCH_INSTALL_HELPERS=on -DCATCH_INSTALL_DOCS=on -DCMAKE_INSTALL_PREFIX=${OUTPUT_PATH}/out ../..
+    COMMAND cd ${OUTPUT_PATH}/projects/Generated && ${CMAKE_COMMAND} -DCATCH_INSTALL_EXTRAS=on -DCATCH_INSTALL_DOCS=on -DCATCH_DEVELOPMENT_BUILD=off -DBUILD_TESTING=off -DCMAKE_INSTALL_PREFIX=${OUTPUT_PATH}/out ../..
+    COMMAND make -C ${OUTPUT_PATH}/projects/Generated
     COMMAND make -C ${OUTPUT_PATH}/projects/Generated install
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-message("Dependency: ${OUTPUT_PATH}")
 add_custom_target( run ALL
-    DEPENDS ${OUTPUT_PATH}/out/include/catch3/catch.hpp
+    DEPENDS ${OUTPUT_PATH}/out/include/catch2/catch_all.hpp
     COMMENT "Generating API documentation with Doxygen" VERBATIM
 )
 
@@ -96,10 +95,10 @@ install(
 
 install(
     FILES
-        snapcatch3.hpp
+        snapcatch2.hpp
 
     DESTINATION
-        include/catch3
+        include/catch2
 )
 
 add_subdirectory(cmake)

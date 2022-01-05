@@ -1,15 +1,19 @@
-# - Try to find SnapCatch3
+# - Try to find SnapCatch2
 #
 # Once done this will define
 #
-# SNAPCATCH3_FOUND        - System has SnapCatch3
-# SNAPCATCH3_INCLUDE_DIRS - The SnapCatch3 include directories
+# SNAPCATCH2_FOUND        - System has SnapCatch2
+# SNAPCATCH2_INCLUDE_DIRS - The SnapCatch2 include directories
+# SNAPCATCH2_LIBRARIES    - The libraries need to link against Catch2
+#
+# TBD: There is a libCatch2Main.a library, I don't think we want it because
+#      we use our own main() function in Snap! C++...
 #
 # License:
 #
 # Copyright (c) 2013-2022  Made to Order Software Corp.  All Rights Reserved
 #
-# https://snapwebsites.org/project/snapcatch3
+# https://snapwebsites.org/project/snapcatch2
 # contact@m2osw.com
 #
 # This program is free software; you can redistribute it and/or modify
@@ -27,27 +31,37 @@
 # 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 find_path(
-    SNAPCATCH3_INCLUDE_DIR
-        catch3/snapcatch3.hpp
+    SNAPCATCH2_INCLUDE_DIR
+        catch2/snapcatch2.hpp
 
     PATHS
-        ENV SNAPCATCH3_INCLUDE_DIR
+        ENV SNAPCATCH2_INCLUDE_DIR
+)
+find_library(
+    SNAPCATCH2_LIBRARY
+        Catch2
+
+    PATHS
+        ENV SNAPCATCH2_LIBRARY
 )
 
 mark_as_advanced(
-    SNAPCATCH3_INCLUDE_DIR
+    SNAPCATCH2_INCLUDE_DIR
+    SNAPCATCH2_LIBRARY
 )
 
-set(SNAPCATCH3_INCLUDE_DIRS ${SNAPCATCH3_INCLUDE_DIR})
+set(SNAPCATCH2_INCLUDE_DIRS ${SNAPCATCH2_INCLUDE_DIR})
+set(SNAPCATCH2_LIBRARIES ${SNAPCATCH2_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 
-# handle the QUIETLY and REQUIRED arguments and set SnapCatch3_FOUND to
+# handle the QUIETLY and REQUIRED arguments and set SnapCatch2_FOUND to
 # TRUE if all listed variables are TRUE
 find_package_handle_standard_args(
-    SnapCatch3
+    SnapCatch2
     DEFAULT_MSG
-    SNAPCATCH3_INCLUDE_DIR
+    SNAPCATCH2_INCLUDE_DIR
+    SNAPCATCH2_LIBRARY
 )
 
 # vim: ts=4 sw=4 et

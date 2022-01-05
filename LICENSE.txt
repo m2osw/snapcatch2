@@ -1,4 +1,4 @@
-snapcatch3 Ubuntu packaging
+snapcatch2 Ubuntu packaging
 Copyright (c) 2006-2022  Made to Order Software Corp.  All Rights Reserved
 
 https://snapwebsites.org/

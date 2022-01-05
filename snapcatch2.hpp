@@ -1,6 +1,6 @@
 // Copyright (c) 2019-2022  Made to Order Software Corp.  All Rights Reserved
 //
-// https://snapwebsites.org/project/snapcatch3
+// https://snapwebsites.org/project/snapcatch2
 // contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #pragma once
 
-#include <catch3/catch.hpp>
+#include <catch2/catch.hpp>
 
 // C++ lib
 //
@@ -37,7 +37,7 @@
  * which is common to all your tests:
  *
  * \code
- *     namespace SNAP_CATCH3_NAMESPACE
+ *     namespace SNAP_CATCH2_NAMESPACE
  *     {
  *     
  *     int g_counter = 0;
@@ -45,17 +45,17 @@
  *     }
  * \endcode
  */
-#define SNAP_CATCH3_NAMESPACE       unittest
+#define SNAP_CATCH2_NAMESPACE       unittest
 
 
 
-/** \brief The snapcatch3 definitions.
+/** \brief The snapcatch2 definitions.
  *
- * This namespace encompasses the extensions we offer to catch3. We reuse
+ * This namespace encompasses the extensions we offer to catch2. We reuse
  * these in pretty much all our tests so to make it easy we made it a
  * common header file.
  */
-namespace SNAP_CATCH3_NAMESPACE
+namespace SNAP_CATCH2_NAMESPACE
 {
 
 
@@ -203,7 +203,7 @@ inline bool & g_verbose()
 #ifdef CATCH_CONFIG_RUNNER
 /** \brief The main function to initialize and run the unit tests.
  *
- * This inline function initializes and runs the snapcatch3 tests.
+ * This inline function initializes and runs the snapcatch2 tests.
  *
  * The \p init_callback parameter is used to initialize your test before
  * we parse the command line. Use the \p callback function to do further
@@ -227,7 +227,7 @@ inline bool & g_verbose()
  * of exception cases, it makes it really very slow.
  *
  * \code
- *     snap_catch3_main(
+ *     snap_catch2_main(
  *           "libutf8"
  *         , "1.2.3"
  *         , argc
@@ -242,7 +242,7 @@ inline bool & g_verbose()
  * a temporary directory, you would write:
  *
  * \code
- *     namespace SNAP_CATCH3_NAMESPACE
+ *     namespace SNAP_CATCH2_NAMESPACE
  *     {
  *
  *     std::string g_tmpdir= std::string("/tmp");
@@ -259,7 +259,7 @@ inline bool & g_verbose()
  *
  *     ...snip...
  *
- *     snap_catch3_main(
+ *     snap_catch2_main(
  *           "libutf8"
  *         , "1.2.3"
  *         , argc
@@ -271,7 +271,7 @@ inline bool & g_verbose()
  *
  * \warning
  * It is possible to add a one letter command line option such as ["-t"],
- * however, catch3 already uses most of these options. The `-t` is used
+ * however, catch2 already uses most of these options. The `-t` is used
  * to list tags, for example.
  *
  * The \p callback function gets called just before the tests get run.
@@ -282,7 +282,7 @@ inline bool & g_verbose()
  * parameters are already set as expected.
  *
  * \code
- *     namespace SNAP_CATCH3_NAMESPACE
+ *     namespace SNAP_CATCH2_NAMESPACE
  *     {
  *
  *     int finish_init(Catch::Session & session)
@@ -303,7 +303,7 @@ inline bool & g_verbose()
  *
  *     ...snip...
  *
- *     snap_catch3_main(
+ *     snap_catch2_main(
  *           "libutf8"
  *         , "1.2.3"
  *         , argc
@@ -336,7 +336,7 @@ inline bool & g_verbose()
  *
  * \return The exit code, usually 0 on success and 1 on an error.
  */
-inline int snap_catch3_main(
+inline int snap_catch2_main(
           char const * project_name
         , char const * project_version
         , int argc
@@ -607,13 +607,13 @@ bool nearly_equal(
 
 
 
-} // SNAP_CATCH3_NAMESPACE namespace
+} // SNAP_CATCH2_NAMESPACE namespace
 
 
 /** \brief Start a new section.
  *
  * This macro is an _overload_ of the CATCH_SECTION() macro defined in
- * catch3.hpp. It is used so we can print out the name of the section
+ * catch2.hpp. It is used so we can print out the name of the section
  * whenever it executes and g_progress is true (i.e. the `--progress`
  * command line option was specified.)
  *
@@ -639,7 +639,7 @@ bool nearly_equal(
 #define CATCH_START_SECTION(name) \
     CATCH_SECTION(name) \
     { \
-        if(SNAP_CATCH3_NAMESPACE::g_progress()) \
+        if(SNAP_CATCH2_NAMESPACE::g_progress()) \
         { \
             std::cout << "SECTION: " << name << std::endl; \
         }
@@ -669,11 +669,11 @@ bool nearly_equal(
  * \param[in] a  The first string.
  * \param[in] b  The second string.
  */
-#define CATCH_REQUIRE_LONG_STRING(a, b) SNAP_CATCH3_NAMESPACE::catch_compare_long_strings(a, b)
+#define CATCH_REQUIRE_LONG_STRING(a, b) SNAP_CATCH2_NAMESPACE::catch_compare_long_strings(a, b)
 
 
 
-#define CATCH_REQUIRE_FLOATING_POINT(a, b) SNAP_CATCH3_NAMESPACE::nearly_equal(a, b)
+#define CATCH_REQUIRE_FLOATING_POINT(a, b) SNAP_CATCH2_NAMESPACE::nearly_equal(a, b)
 
 
 
@@ -702,7 +702,7 @@ public:
     {
         if(m_verbose)
         {
-            SNAP_CATCH3_NAMESPACE::catch_compare_long_strings(e.what(), m_expected_message);
+            SNAP_CATCH2_NAMESPACE::catch_compare_long_strings(e.what(), m_expected_message);
         }
         return e.what() == m_expected_message;
     }

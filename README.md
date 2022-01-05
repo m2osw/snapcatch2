@@ -4,7 +4,7 @@
 src="https://snapwebsites.org/sites/snapwebsites.org/files/images/catch2-logo-small.png" width="502" height="242"/>
 </p>
 
-# Snap! Catch3
+# Snap! Catch2
 
 This package is used so we can have the latest version of Catch to run
 along Snap! Websites. We  tried to move to Ubuntu 18.04 and had problems
@@ -18,7 +18,7 @@ versions of Ubuntu.
 
 ## Command Line Options
 
-The snapcatch3 extension adds support for a few additional command line flags
+The snapcatch2 extension adds support for a few additional command line flags
 that we do not have to manage in each one of our package:
 
 * `-p` or `--progress` -- show progress when entering a section
@@ -30,7 +30,7 @@ Note that the seed may not be used if the test never uses a random number.
 
 ## Initialization
 
-By default, catch3 gives you a lot of freedom in the initialization process.
+By default, catch2 gives you a lot of freedom in the initialization process.
 This is great, but at the same time, we noticed that we were repeating many
 things (copy/paste is not too bad once, even twice, but when you have 20
 projects, that's not good).
@@ -38,7 +38,7 @@ projects, that's not good).
 For that reason, we offer an initialization function. A snapcatch `main()`
 if you'd like.
 
-    int snap_catch3_main(
+    int snap_catch2_main(
           char const * project_name
         , char const * project_version
         , int argc
@@ -94,27 +94,27 @@ value once your test is done.
 
 ## Namespace
 
-The snapcatch3 header adds a namespace for you to put your variable
+The snapcatch2.hpp header adds a namespace for you to put your variable
 declarations and pretty much anything else you want to have in your
 tests.
 
 Here is how you use it:
 
-    namespace SNAP_CATCH3_NAMESPACE
+    namespace SNAP_CATCH2_NAMESPACE
     {
       ...
       int g_my_var = 3;
     }
 
     # In your tests
-    SNAP_CATCH3_NAMESPACE::g_my_var
+    SNAP_CATCH2_NAMESPACE::g_my_var
 
-By default, the snapcatch3.hpp header offers:
+By default, the snapcatch2.hpp header offers:
 
-    SNAP_CATCH3_NAMESPACE::g_progress()
-    SNAP_CATCH3_NAMESPACE::g_verbose()
-    SNAP_CATCH3_NAMESPACE::snap_catch3_main()
-    SNAP_CATCH3_NAMESPACE::catch_compare_long_strings()
+    SNAP_CATCH2_NAMESPACE::g_progress()
+    SNAP_CATCH2_NAMESPACE::g_verbose()
+    SNAP_CATCH2_NAMESPACE::snap_catch2_main()
+    SNAP_CATCH2_NAMESPACE::catch_compare_long_strings()
 
 in the namespace.
 
@@ -128,7 +128,7 @@ We added a section start/end delimiter like so:
 
     CATCH_START_SECTION(name)
     {
-        // your usual catch3 section
+        // your usual catch2 section
     }
     CATCH_END_SECTION()
 
@@ -155,7 +155,7 @@ useful with such, though.
 ## Exception Watcher
 
 The `ExceptionWatcher` class is used to check the message of exceptions.
-The default Catch3 exception handler does not offer a way to compare the
+The default Catch2 exception handler does not offer a way to compare the
 exception message and the exception type at the same time. Not only that
 we expect some messages to be very long so we use the
 `catch_compare_long_strings()` to display the message in verbose mode.
@@ -197,28 +197,28 @@ The only way to resolve the problem was to create a build directory inside
 the source tree and run `cmake` there. Newer version (post 2.7.2) will work
 as expected (I've already tested the newest from the git and it worked.)
 
-So, I resolved the two problems by following the steps from an old Catch3
+So, I resolved the two problems by following the steps from an old Catch2
 documentation file which was to create a `projects/Generated` sub-directory
 and building in there.
 
 ### How to Create a Patch
 
 Just in case I wanted to keep the command line to create a patch since
-our build knows how to automatically apply it from a catch3 tarball:
+our build knows how to automatically apply it from a catch2 tarball:
 
-    LC_ALL=C TZ=UTC0 diff -Naur Catch3-2.7.2 Catch3-2.7.2a >Catch3-2.7.2.patch
+    LC_ALL=C TZ=UTC0 diff -Naur Catch2-2.7.2 Catch2-2.7.2a >Catch2-2.7.2.patch
 
-Change the version to the current Catch3 version tarball, of course.
+Change the version to the current Catch2 version tarball, of course.
 
 
 ## Build & Install of Catch itself
 
 To build, I run:
 
-    rm -rf Catch3-2.7.2
-    tar xf catch3-2.7.2.tar.gz
-    patch Catch3-2.7.2/projects/CMakeLists.txt <Catch3-2.7.2.patch
-    cd Catch3-2.7.2
+    rm -rf Catch2-2.7.2
+    tar xf catch2-2.7.2.tar.gz
+    patch Catch2-2.7.2/projects/CMakeLists.txt <Catch2-2.7.2.patch
+    cd Catch2-2.7.2
     cmake -DCATCH_BUILD_TESTING=off-DCATCH_INSTALL_HELPERS=on -DCATCH_INSTALL_DOCS=on -DCMAKE_INSTALL_PREFIX=... .
     make install
 
@@ -229,11 +229,11 @@ over time.
 # Bugs
 
 Submit bug reports and patches to the packaging on
-[snapcatch3 issues on github](https://github.com/m2osw/snapcatch3/issues).
+[snapcatch2 issues on github](https://github.com/m2osw/snapcatch2/issues).
 
-Bugs and patches to the Catch3 environment itself, please make sure
-to use the catch3 issue queue:
-[catch3 issues on github](https://github.com/catchorg/Catch3/issues)
+Bugs and patches to the Catch2 environment itself, please make sure
+to use the catch2 issue queue:
+[catch2 issues on github](https://github.com/catchorg/Catch2/issues)
 
 
 _This file is part of the [snapcpp project](https://snapwebsites.org/)._
