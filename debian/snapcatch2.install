@@ -1,0 +1,4 @@
+usr/include                           usr
+usr/lib                               usr
+usr/share/pkgconfig                   usr/share/
+usr/share/Catch3                      usr/share/

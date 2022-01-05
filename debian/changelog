@@ -1,0 +1,5 @@
+snapcatch3 (3.0.0.0~xenial) xenial; urgency=high
+
+  * Version 3 of catch for the Snap! C++ environment.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Tue, 04 Jan 2022 22:25:55 -0800
