@@ -18,16 +18,50 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #pragma once
 
-#include <catch2/catch.hpp>
+// catch2 lib
+//
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#pragma GCC diagnostic ignored "-Weffc++"
+#pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
+#pragma GCC diagnostic ignored "-Wsign-promo"
+#include    <catch2/catch_session.hpp>
+#include    <catch2/catch_test_macros.hpp>
+#include    <catch2/catch_approx.hpp>
+#include    <catch2/matchers/catch_matchers.hpp>
+#pragma GCC diagnostic pop
+
 
 // C++ lib
 //
-#include <iostream>
-#include <sstream>
+#include    <stdexcept>
+#include    <iostream>
+#include    <sstream>
+
 
 // C lib
 //
-#include <string.h>
+#include    <string.h>
+#include    <unistd.h>
+
+
+/** \brief Allow for the literals defined by Catch.
+ *
+ * This statement makes all the literals offered by Catch to be used in your
+ * tests.
+ *
+ * For floating point compare against a literal, one can do:
+ *
+ * CATCH_REQUIRE(var == 1.0_a); // equivalent to Approx(1.0)
+ *
+ * Below we also offer a floating point REQUIRE like so:
+ *
+ * CATCH_REQUIRE_FLOATING_POINT(var, 1.0);
+ *
+ * That require uses our implementation of the compare which is limited
+ * to an epsilon variance.
+ */
+using namespace Catch::literals;
 
 
 /** \brief Namespace declaration.
@@ -247,10 +281,10 @@ inline bool & g_verbose()
  *
  *     std::string g_tmpdir= std::string("/tmp");
  *
- *     Catch::clara::Parser add_command_line_options(Catch::clara::Parser const & cli)
+ *     Catch::Clara::Parser add_command_line_options(Catch::Clara::Parser const & cli)
  *     {
  *         return cli
- *              | Catch::clara::Opt(g_tmpdir, "tmpdir")
+ *              | Catch::Clara::Opt(g_tmpdir, "tmpdir")
  *                   ["--tmpdir"]
  *                   ("a path to a temporary directory used by the test.");
  *     }
@@ -342,7 +376,7 @@ inline int snap_catch2_main(
         , int argc
         , char * argv[]
         , void (*init_callback)() = nullptr
-        , Catch::clara::Parser (*add_user_options)(Catch::clara::Parser const & cli) = nullptr
+        , Catch::Clara::Parser (*add_user_options)(Catch::Clara::Parser const & cli) = nullptr
         , int (*callback)(Catch::Session & session) = nullptr
         , void (*finished_callback)() = nullptr)
 {
@@ -361,19 +395,19 @@ inline int snap_catch2_main(
         seed_t seed(static_cast<seed_t>(time(NULL)));
 
         auto cli = session.cli()
-                 | Catch::clara::Opt(seed, "seed")
+                 | Catch::Clara::Opt(seed, "seed")
                     ["-S"]["--seed"]
                     ("value to seed the randomizer, if not specified, randomize")
-                 | Catch::clara::Opt(g_progress())
+                 | Catch::Clara::Opt(g_progress())
                     ["-p"]["--progress"]
                     ("print name of test section being run")
-                 | Catch::clara::Opt(g_tmp_dir(), "tmp_dir")
+                 | Catch::Clara::Opt(g_tmp_dir(), "tmp_dir")
                     ["-T"]["--tmp-dir"]
                     ("specify a temporary directory")
-                 | Catch::clara::Opt(g_verbose())
+                 | Catch::Clara::Opt(g_verbose())
                     ["--verbose"]
                     ("print additional information from within our own tests")
-                 | Catch::clara::Opt(version)
+                 | Catch::Clara::Opt(version)
                     ["-V"]["--version"]
                     ("print out the libutf8 library version these unit tests pertain to");
 
