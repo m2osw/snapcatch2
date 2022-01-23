@@ -20,6 +20,7 @@
 
 // catch2 lib
 //
+#define CATCH_CONFIG_PREFIX_ALL
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #pragma GCC diagnostic ignored "-Weffc++"
