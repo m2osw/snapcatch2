@@ -127,6 +127,25 @@ inline bool & g_progress()
 }
 
 
+/** \brief Retrieve the path to the source directory.
+ *
+ * Some tests need access to the source directory in order to read files
+ * such as the debian/changelog to get the current version or some
+ * configuration files.
+ *
+ * This function returns a reference to that path which can be set by
+ * the user on the command line using the `--source-dir` option.
+ *
+ * \return A reference to the source directory.
+ */
+inline std::string & g_source_dir()
+{
+    static std::string source_dir = std::string();
+
+    return source_dir;
+}
+
+
 /** \brief Retrieve the temporary directory.
  *
  * Many tests make use of input and output files. These are expected
@@ -280,7 +299,7 @@ inline bool & g_verbose()
  *     namespace SNAP_CATCH2_NAMESPACE
  *     {
  *
- *     std::string g_tmpdir= std::string("/tmp");
+ *     std::string g_tmpdir = std::string("/tmp");
  *
  *     Catch::Clara::Parser add_command_line_options(Catch::Clara::Parser const & cli)
  *     {
@@ -402,6 +421,9 @@ inline int snap_catch2_main(
                  | Catch::Clara::Opt(g_progress())
                     ["-p"]["--progress"]
                     ("print name of test section being run")
+                 | Catch::Clara::Opt(g_source_dir(), "source_dir")
+                    ["--source-dir"]
+                    ("specify the full path to the source directory")
                  | Catch::Clara::Opt(g_tmp_dir(), "tmp_dir")
                     ["-T"]["--tmp-dir"]
                     ("specify a temporary directory")
@@ -455,6 +477,9 @@ inline int snap_catch2_main(
                   << "]:unittest: seed is "
                   << seed
                   << "\n"
+                  << "source directory: \""
+                  << g_source_dir()
+                  << "\""
                   << "temporary directory: \""
                   << g_tmp_dir()
                   << "\""
