@@ -1,3 +1,9 @@
+snapcatch2 (3.0.1.2~bionic) bionic; urgency=high
+
+  * I also needed to update the .tar.gz and I recompressed with -9.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 03 Feb 2022 06:27:26 -0800
+
 snapcatch2 (3.0.1.1~bionic) bionic; urgency=high
 
   * Oops! The version for this one has to be a build version only...
