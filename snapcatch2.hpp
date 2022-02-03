@@ -453,6 +453,24 @@ inline int snap_catch2_main(
             return 0;
         }
 
+        // also turn on verbosity if the VERBOSE environment variable
+        // is set to a value other than 0, false, off
+        //
+        char const * verbose(getenv("VERBOSE"));
+        if(verbose != nullptr)
+        {
+            if(strcmp(verbose, "0") != 0
+            && strcmp(verbose, "false") != 0
+            && strcmp(verbose, "off") != 0)
+            {
+                g_verbose() = true;
+            }
+        }
+        if(g_verbose())
+        {
+            std::cout << "info: verbosity activated.\n";
+        }
+
         detail::init_tmp_dir(project_name);
 
         // by default we get a different seed each time; that really helps

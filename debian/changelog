@@ -1,3 +1,9 @@
+snapcatch2 (3.0.1.0~bionic) bionic; urgency=high
+
+  * Added support for a VERBOSE variable on top of --verbose.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 02 Feb 2022 21:38:09 -0800
+
 snapcatch2 (3.0.0.0~bionic) bionic; urgency=high
 
   * Version 3.x of catch2 for the Snap! C++ environment.
