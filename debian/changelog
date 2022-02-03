@@ -1,3 +1,10 @@
+snapcatch2 (3.0.1.1~bionic) bionic; urgency=high
+
+  * Oops! The version for this one has to be a build version only...
+  * So I had to change the tar.gz filename to 3.0.1 which is wrong!
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 02 Feb 2022 21:49:28 -0800
+
 snapcatch2 (3.0.1.0~bionic) bionic; urgency=high
 
   * Added support for a VERBOSE variable on top of --verbose.
