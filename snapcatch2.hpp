@@ -577,69 +577,67 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
         }
     };
 
-    if(a == b)
+    if(a != b)
     {
-        return;
-    }
+        std::cout << "error: long strings do not match.\n"
+                  << "---------------------------------------------------\n";
 
-    std::cout << "error: long strings do not match.\n"
-              << "---------------------------------------------------\n";
-
-    // TODO: we may want to look into supporting UTF-8 properly
-    //
-    size_t const max(std::min(a.length(), b.length()));
-    bool err(false);
-    for(size_t idx(0); idx < max; ++idx)
-    {
-        if(a[idx] == b[idx])
+        // TODO: we may want to look into supporting UTF-8 properly
+        //
+        size_t const max(std::min(a.length(), b.length()));
+        bool err(false);
+        for(size_t idx(0); idx < max; ++idx)
         {
-            if(err)
+            if(a[idx] == b[idx])
             {
-                err = false;
-                std::cout << "\033[0m";
+                if(err)
+                {
+                    err = false;
+                    std::cout << "\033[0m";
+                }
+                std::cout << a[idx];
             }
-            std::cout << a[idx];
+            else
+            {
+                if(!err)
+                {
+                    err = true;
+                    std::cout << "\033[7m";
+                }
+                std::cout << "[";
+                print_char(a[idx]);
+                std::cout << "/";
+                print_char(b[idx]);
+                std::cout << "]";
+            }
         }
-        else
+        if(err)
         {
-            if(!err)
-            {
-                err = true;
-                std::cout << "\033[7m";
-            }
-            std::cout << "[";
-            print_char(a[idx]);
-            std::cout << "/";
-            print_char(b[idx]);
-            std::cout << "]";
+            err = false;
+            std::cout << "\033[0m";
         }
-    }
-    if(err)
-    {
-        err = false;
-        std::cout << "\033[0m";
-    }
 
-    std::cout << std::endl
-              << "---------------------------------------------------" << std::endl;
+        std::cout << std::endl
+                  << "---------------------------------------------------" << std::endl;
 
-    if(a.length() > b.length())
-    {
-        std::cout << "Left hand side string is longer ("
-                  << a.length()
-                  << " versus "
-                  << b.length()
-                  << ")."
-                  << std::endl;
-    }
-    else if(b.length() > a.length())
-    {
-        std::cout << "Right hand side string is longer ("
-                  << a.length()
-                  << " versus "
-                  << b.length()
-                  << ")."
-                  << std::endl;
+        if(a.length() > b.length())
+        {
+            std::cout << "Left hand side string is longer ("
+                      << a.length()
+                      << " versus "
+                      << b.length()
+                      << ")."
+                      << std::endl;
+        }
+        else if(b.length() > a.length())
+        {
+            std::cout << "Right hand side string is longer ("
+                      << a.length()
+                      << " versus "
+                      << b.length()
+                      << ")."
+                      << std::endl;
+        }
     }
 
     // to generate the standard error too
