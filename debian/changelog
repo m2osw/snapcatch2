@@ -1,3 +1,9 @@
+snapcatch2 (3.0.1.4~bionic) bionic; urgency=high
+
+  * Force compiling with -fPIC (now that snapcatch offers a compiled library).
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 07 Mar 2022 11:35:10 -0800
+
 snapcatch2 (3.0.1.3~bionic) bionic; urgency=high
 
   * Make sure at least one assertion occurs in catch_compare_long_strings().
