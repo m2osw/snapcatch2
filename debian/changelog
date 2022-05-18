@@ -1,3 +1,9 @@
+snapcatch2 (3.0.2.1~bionic) bionic; urgency=high
+
+  * Updated to version 3.0.1 (still using 3.0.2, trying to catch up).
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 18 May 2022 08:54:01 -0700
+
 snapcatch2 (3.0.2.0~bionic) bionic; urgency=high
 
   * Updated to version 3.0.0-preview5 (using 3.0.2 to match our version scheme).
