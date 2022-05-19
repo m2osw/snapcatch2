@@ -1,3 +1,9 @@
+snapcatch2 (3.0.1.5~bionic) bionic; urgency=high
+
+  * Fixed the tarball, I changed the path to 3.0.2 and did not fix that later.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 19 May 2022 11:24:29 -0700
+
 snapcatch2 (3.0.1.4~bionic) bionic; urgency=high
 
   * Updated to version 3.0.1 (first official 3.x version).
