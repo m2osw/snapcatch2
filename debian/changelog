@@ -1,20 +1,9 @@
-snapcatch2 (3.0.2.1~bionic) bionic; urgency=high
-
-  * Updated to version 3.0.1 (still using 3.0.2, trying to catch up).
-
- -- Alexis Wilke <alexis@m2osw.com>  Wed, 18 May 2022 08:54:01 -0700
-
-snapcatch2 (3.0.2.0~bionic) bionic; urgency=high
-
-  * Updated to version 3.0.0-preview5 (using 3.0.2 to match our version scheme).
-
- -- Alexis Wilke <alexis@m2osw.com>  Wed, 20 Apr 2022 15:45:55 -0700
-
 snapcatch2 (3.0.1.4~bionic) bionic; urgency=high
 
+  * Updated to version 3.0.1 (first official 3.x version).
   * Force compiling with -fPIC (now that snapcatch offers a compiled library).
 
- -- Alexis Wilke <alexis@m2osw.com>  Mon, 07 Mar 2022 11:35:10 -0800
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 19 May 2022 10:51:52 -0700
 
 snapcatch2 (3.0.1.3~bionic) bionic; urgency=high
 
