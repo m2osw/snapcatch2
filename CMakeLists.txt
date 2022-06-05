@@ -31,24 +31,9 @@ set(SNAPCATCH2_VERSION "${SNAPCATCH2_VERSION_MAJOR}.${SNAPCATCH2_VERSION_MINOR}.
 set(OUTPUT_PATH ${CMAKE_BINARY_DIR}/Catch2-${SNAPCATCH2_VERSION})
 
 
-# The copy of the cmake folder is for developers; as far as the package is
-# concerned, the "normal" location (as choosen by Catch2/CMake/LinuxGNU) is
-# used as expected (and it changed drastically between 16.04 & 18.04)
-# If that becomes an issue in the future, we may instead have to add another
-# search path to look for cmake files under dist/lib/cmake
-#    COMMAND if test -d ${OUTPUT_PATH}/out/lib/*-linux-gnu/cmake\; then cp -r ${OUTPUT_PATH}/out/lib/*-linux-gnu/cmake ${OUTPUT_PATH}/out/share/.\; fi
-#
 add_custom_command(
     OUTPUT ${OUTPUT_PATH}/out/include/catch2/catch_all.hpp
-    COMMAND echo "------------ sub-cmake call in `pwd` -- ${CMAKE_INSTALL_PREFIX}"
-    COMMAND rm -rf ${OUTPUT_PATH}
-    COMMAND tar xf ${CMAKE_SOURCE_DIR}/catch2-${SNAPCATCH2_VERSION}.tar.gz
-    COMMAND if test -f ${CMAKE_SOURCE_DIR}/Catch2-${SNAPCATCH2_VERSION}.patch\; then patch ${OUTPUT_PATH}/projects/CMakeLists.txt <${CMAKE_SOURCE_DIR}/Catch2-${SNAPCATCH2_VERSION}.patch\; fi
-    COMMAND mkdir -p ${OUTPUT_PATH}/out
-    COMMAND mkdir -p ${OUTPUT_PATH}/projects/Generated
-    COMMAND cd ${OUTPUT_PATH}/projects/Generated && ${CMAKE_COMMAND} -DCATCH_INSTALL_EXTRAS=on -DCATCH_INSTALL_DOCS=on -DCATCH_DEVELOPMENT_BUILD=off -DBUILD_TESTING=off -DCMAKE_INSTALL_PREFIX=${OUTPUT_PATH}/out -DCMAKE_POSITION_INDEPENDENT_CODE=on ../..
-    COMMAND make -C ${OUTPUT_PATH}/projects/Generated
-    COMMAND make -C ${OUTPUT_PATH}/projects/Generated install
+    COMMAND ${CMAKE_SOURCE_DIR}/cmake/build-catch2.sh ${OUTPUT_PATH} ${SNAPCATCH2_VERSION}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
