@@ -497,7 +497,7 @@ inline int snap_catch2_main(
                   << "\n"
                   << "source directory: \""
                   << g_source_dir()
-                  << "\""
+                  << "\"\n"
                   << "temporary directory: \""
                   << g_tmp_dir()
                   << "\""
