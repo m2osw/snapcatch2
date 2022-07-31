@@ -36,6 +36,7 @@
 // C++ lib
 //
 #include    <stdexcept>
+#include    <fstream>
 #include    <iostream>
 #include    <sstream>
 
@@ -477,6 +478,16 @@ inline int snap_catch2_main(
         // in detecting errors! At least it helped me many times.
         //
         srand(seed);
+
+        // save the seed, it can be practical opposed to searching your
+        // test output
+        //
+        std::ofstream seed_file;
+        seed_file.open("seed.txt");
+        if(seed_file.is_open())
+        {
+            seed_file << seed << std::endl;
+        }
 
         if(callback != nullptr)
         {
