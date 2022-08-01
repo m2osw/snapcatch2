@@ -482,11 +482,13 @@ inline int snap_catch2_main(
         // save the seed, it can be practical opposed to searching your
         // test output
         //
-        std::ofstream seed_file;
-        seed_file.open("seed.txt");
-        if(seed_file.is_open())
         {
-            seed_file << seed << std::endl;
+            std::ofstream seed_file;
+            seed_file.open("seed.txt");
+            if(seed_file.is_open())
+            {
+                seed_file << seed << std::endl;
+            }
         }
 
         if(callback != nullptr)
