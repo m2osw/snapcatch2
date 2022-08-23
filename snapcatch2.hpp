@@ -576,17 +576,25 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
             //
             std::cout << "^" << static_cast<char>(c + 0x40);
         }
-        else if(static_cast<unsigned char>(c) < 0x80 || static_cast<unsigned char>(c) > 0x9F)
+        else if(static_cast<unsigned char>(c) < 0x80)
         {
             // standard character
             //
             std::cout << c;
         }
-        else
+        else if(static_cast<unsigned char>(c) < 0xA0)
         {
             // graphical control
             //
             std::cout << "@" << static_cast<char>(c - 0x40);
+        }
+        else
+        {
+            // UTF-8 characters cannot be written as is since we are breaking
+            // up the string into bytes instead of characters; so instead show
+            // the corresponding \xXX value
+            //
+            std::cout << "\\x" << std::hex << static_cast<int>(static_cast<uint8_t>(c));
         }
     };
 
