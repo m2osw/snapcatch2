@@ -418,7 +418,7 @@ inline int snap_catch2_main(
         auto cli = session.cli()
                  | Catch::Clara::Opt(seed, "seed")
                     ["-S"]["--seed"]
-                    ("value to seed the randomizer, if not specified, randomize")
+                    ("value to seed the randomizer, if not specified, use time()")
                  | Catch::Clara::Opt(g_progress())
                     ["-p"]["--progress"]
                     ("print name of test section being run")
