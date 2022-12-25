@@ -147,6 +147,25 @@ inline std::string & g_source_dir()
 }
 
 
+/** \brief Retrieve the path to the binary (build) directory.
+ *
+ * Some tests need access to the binary directory in order to access
+ * generated files including tools that were created by cmake.
+ * Those files will be found under this directory.
+ *
+ * This function returns a reference to that path which can be set by
+ * the user on the command line using the `--binary-dir` option.
+ *
+ * \return A reference to the binary directory.
+ */
+inline std::string & g_binary_dir()
+{
+    static std::string binary_dir = std::string();
+
+    return binary_dir;
+}
+
+
 /** \brief Retrieve the temporary directory.
  *
  * Many tests make use of input and output files. These are expected
@@ -425,6 +444,9 @@ inline int snap_catch2_main(
                  | Catch::Clara::Opt(g_source_dir(), "source_dir")
                     ["--source-dir"]
                     ("specify the full path to the source directory")
+                 | Catch::Clara::Opt(g_binary_dir(), "binary_dir")
+                    ["--binary-dir"]
+                    ("specify the full path to the binary directory")
                  | Catch::Clara::Opt(g_tmp_dir(), "tmp_dir")
                     ["-T"]["--tmp-dir"]
                     ("specify a temporary directory")
@@ -510,6 +532,9 @@ inline int snap_catch2_main(
                   << "\n"
                   << "source directory: \""
                   << g_source_dir()
+                  << "\"\n"
+                  << "binary directory: \""
+                  << g_binary_dir()
                   << "\"\n"
                   << "temporary directory: \""
                   << g_tmp_dir()
