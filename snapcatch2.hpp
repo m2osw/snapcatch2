@@ -18,7 +18,7 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #pragma once
 
-// catch2 lib
+// catch2
 //
 #define CATCH_CONFIG_PREFIX_ALL
 #pragma GCC diagnostic push
@@ -33,7 +33,7 @@
 #pragma GCC diagnostic pop
 
 
-// C++ lib
+// C++
 //
 #include    <stdexcept>
 #include    <fstream>
@@ -185,6 +185,263 @@ inline std::string & g_tmp_dir()
 }
 
 
+/** \brief Generate a random number.
+ *
+ * This function uses the rand() function to generate a random number
+ * for your test. This is very simple and it can easily be reproduced
+ * since we offer the --seed command line option to re-seed your test
+ * with the same value.
+ *
+ * The template expects to be used to fill the number of bits specified
+ * in the type. By default, rand() returns less than 32 bits of truely
+ * random data. This function makes sure that all the bits are set to
+ * some random value.
+ *
+ * Note that it is extremely unlikely that you get 0 or the maximum
+ * value ("-1" for an unsigned number or "-1 >> 1" for a signed number).
+ * If you want your test to verify those specific numbers, make sure
+ * to include special cases in your code.
+ *
+ * \note
+ * This function takes the result as a parameter in order to determine
+ * the template parameter T.
+ *
+ * \exception std::logic_error
+ * If somehow you have a type which size is not handled, then the function
+ * emits a logic_error. This may happen if you use intrinsic types which
+ * can be 256 or 512 bits and these are not handled by this function.
+ *
+ * \tparam T  The type of integral number to generate.
+ * \param[out] result  The resulting random number.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+template<typename T>
+void random(T & result)
+{
+    int const size((sizeof(T) + 1) / 2);
+    switch(size)
+    {
+    case 1: // 8 and 16 bits
+        result = static_cast<T>(rand());
+        break;
+
+    case 2: // 32 bits
+        result = static_cast<T>(
+                (static_cast<std::uint32_t>(rand()) << 16)
+              ^ (static_cast<std::uint32_t>(rand()) <<  0));
+        break;
+
+    case 4: // 64 bits
+        result = static_cast<T>(
+               (static_cast<std::uint64_t>(rand()) << 48)
+             ^ (static_cast<std::uint64_t>(rand()) << 32)
+             ^ (static_cast<std::uint64_t>(rand()) << 16)
+             ^ (static_cast<std::uint64_t>(rand()) <<  0));
+        break;
+
+    case 8: // 128 bits
+        result = static_cast<T>(
+               (static_cast<unsigned __int128>(rand()) << 112)
+             ^ (static_cast<unsigned __int128>(rand()) <<  96)
+             ^ (static_cast<unsigned __int128>(rand()) <<  80)
+             ^ (static_cast<unsigned __int128>(rand()) <<  64)
+             ^ (static_cast<unsigned __int128>(rand()) <<  48)
+             ^ (static_cast<unsigned __int128>(rand()) <<  32)
+             ^ (static_cast<unsigned __int128>(rand()) <<  16)
+             ^ (static_cast<unsigned __int128>(rand()) <<   0));
+        break;
+
+    default:
+        CATCH_REQUIRE("incorrect type for random()" == nullptr);
+        throw std::logic_error("incorrect type for random()");
+
+    }
+}
+#pragma GCC diagnostic pop
+
+
+enum class character_t
+{
+    CHARACTER_ZUNICODE,      // any from 0 to 0x10FFFF
+    CHARACTER_ZPLAN0,        // any from 0 to 0x00FFFF
+    CHARACTER_UNICODE,       // any from 1 to 0x10FFFF
+    CHARACTER_PLAN0,         // any from 1 to 0x00FFFF
+    CHARACTER_LETTERS,       // a-z, A-Z
+    CHARACTER_ALPHANUMERIC,  // a-z, A-Z, 0-9
+    CHARACTER_DIGITS,        // 0-9
+    CHARACTER_ASCII,         // 0x20 to 0x7E
+    CHARACTER_LABEL,         // a-z, A-Z, 0-9, _
+};
+
+
+inline char32_t random_char(character_t category)
+{
+    constexpr std::size_t const SURROGATES_COUNT(0xE000 - 0xD800);
+    char32_t result(U'\0');
+    switch(category)
+    {
+    case character_t::CHARACTER_ZUNICODE:
+        random(result);
+        result %= 0x110000 - SURROGATES_COUNT;
+        break;
+
+    case character_t::CHARACTER_ZPLAN0:
+        random(result);
+        result %= 0x010000 - SURROGATES_COUNT;
+        break;
+
+    case character_t::CHARACTER_UNICODE:
+        random(result);
+        result = result % (0x110000 - SURROGATES_COUNT - 1) + 1;
+        break;
+
+    case character_t::CHARACTER_PLAN0:
+        random(result);
+        result = result % (0x010000 - SURROGATES_COUNT - 1) + 1;
+        break;
+
+    case character_t::CHARACTER_LETTERS:
+        random(result);
+        result = result % (26 * 2) + 'A';
+        if(result > 'Z')
+        {
+            // lowercase
+            //
+            result += 'a' - 'Z' - 1;
+        }
+        break;
+
+    case character_t::CHARACTER_ALPHANUMERIC:
+        random(result);
+        result = result % (26 * 2 + 10) + '0';
+        if(result > '9')
+        {
+            // uppercase
+            //
+            result += 'A' - '9' - 1;
+            if(result > 'Z')
+            {
+                // lowercase
+                //
+                result += 'a' - 'Z' - 1;
+            }
+        }
+        break;
+
+    case character_t::CHARACTER_DIGITS:
+        random(result);
+        result = result % 10 + '0';
+        break;
+
+    case character_t::CHARACTER_ASCII:
+        random(result);
+        result = result % ('~' - ' ' + 1) + ' ';
+        break;
+
+    case character_t::CHARACTER_LABEL:
+        random(result);
+        result = result % (26 * 2 + 10 + 1) + '0';
+        if(result > '9')
+        {
+            // uppercase
+            //
+            result += 'A' - '9' - 1;
+            if(result > 'Z')
+            {
+                // lowercase
+                //
+                result += 'a' - 'Z' - 1;
+                if(result > 'z')
+                {
+                    result = '_';
+                }
+            }
+        }
+        break;
+
+    }
+
+    if(result >= 0xD800)
+    {
+        // skip the surrogates (not valid char32_t values)
+        //
+        result += SURROGATES_COUNT;
+    }
+
+    return result;
+}
+
+
+/** \brief Convert a char32_t to a UTF-8 chain of bytes.
+ *
+ * This function converts a char32_t in a string of UTF-8 bytes. If the input
+ * is an invalid character (larger than 0x10FFFF) then nothing happens.
+ *
+ * This function is expected to only be used in tests. In your code,
+ * make sure to use the libutf8::to_u8string().
+ *
+ * \param[in,out] out  The output string where bytes get added.
+ * \param[in] wc  The input wide character.
+ */
+inline void wctombs(std::string & out, char32_t wc)
+{
+    if(wc < 0x80)
+    {
+        out += static_cast<char>(wc);
+    }
+    else if(wc < 0x800)
+    {
+        out += static_cast<char>((wc >> 6) | 0xC0);
+        out += static_cast<char>((wc & 0x3F) | 0x80);
+    }
+    else if(wc < 0x10000)
+    {
+        out += static_cast<char>((wc >> 12) | 0xE0);
+        out += static_cast<char>(((wc >> 6) & 0x3F) | 0x80);
+        out += static_cast<char>((wc & 0x3F) | 0x80);
+    }
+    else if(wc < 0x110000)
+    {
+        out += static_cast<char>((wc >> 18) | 0xF0);
+        out += static_cast<char>(((wc >> 12) & 0x3F) | 0x80);
+        out += static_cast<char>(((wc >> 6) & 0x3F) | 0x80);
+        out += static_cast<char>((wc & 0x3F) | 0x80);
+    }
+}
+
+
+inline std::string random_string(
+          std::size_t length_min
+        , std::size_t length_max // inclusive
+        , character_t category = character_t::CHARACTER_ASCII)
+{
+    std::size_t length(0);
+    random(length);
+    length = length % (length_max + 1 - length_min) + length_min;
+
+    std::string result;
+    for(std::size_t i(0); i < length; ++i)
+    {
+        char32_t c(random_char(category));
+
+        // labels cannot start with a digit
+        //
+        while(result.empty()
+           && category == character_t::CHARACTER_LABEL
+           && c >= '0'
+           && c <= '9')
+        {
+            c = random_char(category);
+        }
+
+        wctombs(result, c);
+    }
+
+    return result;
+}
+
+
 namespace detail
 {
 
@@ -319,14 +576,14 @@ inline bool & g_verbose()
  *     namespace SNAP_CATCH2_NAMESPACE
  *     {
  *
- *     std::string g_tmpdir = std::string("/tmp");
+ *     std::string g_conf_dir = std::string("/etc/config");
  *
  *     Catch::Clara::Parser add_command_line_options(Catch::Clara::Parser const & cli)
  *     {
  *         return cli
- *              | Catch::Clara::Opt(g_tmpdir, "tmpdir")
- *                   ["--tmpdir"]
- *                   ("a path to a temporary directory used by the test.");
+ *              | Catch::Clara::Opt(g_conf_dir, "conf-dir")
+ *                   ["--conf-dir"]
+ *                   ("a path to a configuration directory used by the test.");
  *     }
  *
  *     }
@@ -362,7 +619,7 @@ inline bool & g_verbose()
  *     int finish_init(Catch::Session & session)
  *     {
  *         std::string cmd("rm -rf ");
- *         cmd += g_tmpdir;
+ *         cmd += g_conf_dir;
  *         cmd += "/my-project";
  *         if(system(cmd.c_str()) != 0)
  *         {
