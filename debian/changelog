@@ -1,3 +1,9 @@
+snapcatch2 (3.3.1.0~bionic) bionic; urgency=high
+
+  * Upgraded to newest upstream version (3.3.1).
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 29 Jan 2023 19:55:25 -0800
+
 snapcatch2 (3.3.0.0~bionic) bionic; urgency=high
 
   * Upgraded to newest upstream version (3.3.0).
