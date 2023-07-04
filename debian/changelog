@@ -1,4 +1,4 @@
-snapcatch2 (3.3.1.0~bionic) bionic; urgency=high
+snapcatch2 (3.3.1.0~jammy) jammy; urgency=high
 
   * Upgraded to newest upstream version (3.3.1).
 
