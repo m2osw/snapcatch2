@@ -1,3 +1,9 @@
+snapcatch2 (3.4.0.0~jammy) jammy; urgency=high
+
+  * Upgraded to newest upstream version (3.4.0).
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 13 Jul 2023 20:32:26 -0700
+
 snapcatch2 (3.3.1.0~jammy) jammy; urgency=high
 
   * Upgraded to newest upstream version (3.3.1).
