@@ -49,8 +49,8 @@
 
 /** \brief Allow for the literals defined by Catch.
  *
- * This statement makes all the literals offered by Catch to be used in your
- * tests.
+ * This statement makes all the literals offered by Catch to be usable in
+ * your tests.
  *
  * For floating point compare against a literal, one can do:
  *
