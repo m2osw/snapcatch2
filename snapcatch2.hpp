@@ -673,7 +673,7 @@ inline int snap_catch2_main(
         , int argc
         , char * argv[]
         , void (*init_callback)() = nullptr
-        , Catch::Clara::Parser (*add_user_options)(Catch::Clara::Parser const & cli) = nullptr
+        , void (*add_user_options)(Catch::Clara::Parser & cli) = nullptr
         , int (*callback)(Catch::Session & session) = nullptr
         , void (*finished_callback)() = nullptr)
 {
@@ -691,8 +691,8 @@ inline int snap_catch2_main(
         bool version(false);
         seed_t seed(static_cast<seed_t>(time(NULL)));
 
-        auto cli = session.cli()
-                 | Catch::Clara::Opt(seed, "seed")
+        auto cli = session.cli();
+        cli |= Catch::Clara::Opt(seed, "seed")
                     ["-S"]["--seed"]
                     ("value to seed the randomizer, if not specified, use time()")
                  | Catch::Clara::Opt(g_progress())
@@ -716,7 +716,7 @@ inline int snap_catch2_main(
 
         if(add_user_options != nullptr)
         {
-            cli = add_user_options(cli);
+            add_user_options(cli);
         }
 
         session.cli(cli);
