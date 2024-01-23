@@ -876,7 +876,7 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
             // up the string into bytes instead of characters; so instead show
             // the corresponding \xXX value
             //
-            std::cout << "\\x" << std::hex << static_cast<int>(static_cast<uint8_t>(c));
+            std::cout << "\\x" << std::hex << static_cast<int>(static_cast<std::uint8_t>(c));
         }
     };
 
