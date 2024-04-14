@@ -748,7 +748,7 @@ inline int snap_catch2_main(
         }
         if(g_verbose())
         {
-            std::cout << "info: verbosity activated.\n";
+            std::cout << "info: verbosity activated." << std::endl;
         }
 
         detail::init_tmp_dir(project_name);
