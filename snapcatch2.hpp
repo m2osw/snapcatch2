@@ -166,6 +166,32 @@ inline std::string & g_binary_dir()
 }
 
 
+/** \brief Retrieve the path to the dist(ribution) directory.
+ *
+ * Some tests need access to the dist directory where dependencies
+ * installed their files. For example, the eventdispatcher message
+ * verification process loads files from
+ * `/usr/share/eventdispatcher/messages`. This folder is likely
+ * to not exist and if it does, it is even less likely to be up to
+ * date on a programmer's machine.
+ *
+ * This function returns a reference to that path which is used
+ * to install such files while building all the contribs and
+ * main snapwebsites files.
+ *
+ * The unit test is expected to use the `--dist-dir` option in
+ * order to define this directory.
+ *
+ * \return A reference to the binary directory.
+ */
+inline std::string & g_dist_dir()
+{
+    static std::string dist_dir = std::string();
+
+    return dist_dir;
+}
+
+
 /** \brief Retrieve the temporary directory.
  *
  * Many tests make use of input and output files. These are expected
@@ -704,6 +730,9 @@ inline int snap_catch2_main(
                  | Catch::Clara::Opt(g_binary_dir(), "binary_dir")
                     ["--binary-dir"]
                     ("specify the full path to the binary directory")
+                 | Catch::Clara::Opt(g_dist_dir(), "dist_dir")
+                    ["--dist-dir"]
+                    ("specify the full path to the dist directory")
                  | Catch::Clara::Opt(g_tmp_dir(), "tmp_dir")
                     ["-T"]["--tmp-dir"]
                     ("specify a temporary directory")
@@ -787,13 +816,16 @@ inline int snap_catch2_main(
                   << "]:unittest: seed is "
                   << seed
                   << "\n"
-                  << "source directory: \""
+                     "source directory: \""
                   << g_source_dir()
                   << "\"\n"
-                  << "binary directory: \""
+                     "binary directory: \""
                   << g_binary_dir()
                   << "\"\n"
-                  << "temporary directory: \""
+                     "dist directory: \""
+                  << g_dist_dir()
+                  << "\"\n"
+                     "temporary directory: \""
                   << g_tmp_dir()
                   << "\""
                   << std::endl;
