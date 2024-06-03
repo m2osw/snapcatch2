@@ -279,8 +279,8 @@ void random(T & result)
         break;
 
     default:
-        CATCH_REQUIRE("incorrect type for random()" == nullptr);
-        throw std::logic_error("incorrect type for random()");
+        CATCH_REQUIRE("unsupported type for random()" == nullptr);
+        throw std::logic_error("unsupported type for random()");
 
     }
 }
