@@ -39,7 +39,7 @@ add_custom_command(
 
 add_custom_target( run ALL
     DEPENDS ${OUTPUT_PATH}/out/include/catch2/catch_all.hpp
-    COMMENT "Generating API documentation with Doxygen" VERBATIM
+    COMMENT "Generating the catch2 environment" VERBATIM
 )
 
 install(
