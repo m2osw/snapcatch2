@@ -1,6 +1,7 @@
 snapcatch2 (3.5.2.0~bionic) bionic; urgency=high
 
   * Upgraded to newest upstream version (3.5.2).
+  * Changed setup to remove the POSIX signal capture from catch2.
 
  -- Alexis Wilke <alexis@m2osw.com>  Mon, 22 Jan 2024 18:36:33 -0800
 
