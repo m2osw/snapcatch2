@@ -568,7 +568,7 @@ inline bool & g_verbose()
  * run (i.e. the `--version` command line option will run and the
  * function exit before \p callback gets called. So when the user uses
  * that command line option, you do not get \p callback called, however,
- * \p init_callback will always be called.)
+ * \p init_callback will always be called).
  *
  * We do it this way because the function will try/catch std::exception
  * so if an exception occurs in your \p init_callback, it will always
@@ -631,7 +631,7 @@ inline bool & g_verbose()
  * however, catch2 already uses most of these options. The `-t` is used
  * to list tags, for example.
  *
- * The \p callback function gets called just before the tests get run.
+ * The \p callback function gets called just before the tests run.
  * In other words, we give you one more chance to verify command line
  * parameters or do additional initilalizations, now that you have access
  * to the user defined command line parameters. We pass the session to
