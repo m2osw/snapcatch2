@@ -468,6 +468,24 @@ inline std::string random_string(
 }
 
 
+inline std::vector<std::uint8_t> random_buffer(
+          std::size_t size_min  // inclusive
+        , std::size_t size_max) // inclusive
+{
+    std::size_t size(0);
+    random(size);
+    size = size % (size_max + 1 - size_min) + size_min;
+
+    std::vector<std::uint8_t> result(size);
+    for(std::size_t i(0); i < size; ++i)
+    {
+        random(result[i]);
+    }
+
+    return result;
+}
+
+
 namespace detail
 {
 
