@@ -804,6 +804,7 @@ inline int snap_catch2_main(
         // in detecting errors! At least it helped me many times.
         //
         srand(seed);
+        srand48(seed);
 
         // save the seed, it can be practical opposed to searching your
         // test output
