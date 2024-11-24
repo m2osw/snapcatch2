@@ -37,6 +37,7 @@
 //
 #include    <stdexcept>
 #include    <fstream>
+#include    <iomanip>
 #include    <iostream>
 #include    <sstream>
 
@@ -907,7 +908,7 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
         {
             // control character
             //
-            std::cout << "^" << static_cast<char>(c + 0x40);
+            std::cout << '^' << static_cast<char>(c + 0x40);
         }
         else if(static_cast<unsigned char>(c) < 0x80)
         {
@@ -919,7 +920,7 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
         {
             // graphical control
             //
-            std::cout << "@" << static_cast<char>(c - 0x40);
+            std::cout << '@' << static_cast<char>(c - 0x40);
         }
         else
         {
@@ -938,9 +939,9 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
 
         // TODO: we may want to look into supporting UTF-8 properly
         //
-        size_t const max(std::min(a.length(), b.length()));
+        std::size_t const max(std::min(a.length(), b.length()));
         bool err(false);
-        for(size_t idx(0); idx < max; ++idx)
+        for(std::size_t idx(0); idx < max; ++idx)
         {
             if(a[idx] == b[idx])
             {
@@ -958,11 +959,11 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
                     err = true;
                     std::cout << "\033[7m";
                 }
-                std::cout << "[";
+                std::cout << '[';
                 print_char(a[idx]);
-                std::cout << "/";
+                std::cout << '/';
                 print_char(b[idx]);
-                std::cout << "]";
+                std::cout << ']';
             }
         }
         if(err)
@@ -997,6 +998,122 @@ inline void catch_compare_long_strings(std::string const & a, std::string const 
     // to generate the standard error too
     //
     CATCH_REQUIRE(a == b);
+}
+
+
+inline void catch_compare_large_buffers(void const * a, std::size_t a_size, void const * b, std::size_t b_size)
+{
+    if(a_size == b_size
+    && memcmp(a, b, a_size) == 0)
+    {
+        return;
+    }
+
+    std::cout << "error: large buffers do not match.\n"
+              << "---------------------------------------------------\n";
+
+    std::uint8_t const * a_ptr(reinterpret_cast<std::uint8_t const *>(a));
+    std::uint8_t const * b_ptr(reinterpret_cast<std::uint8_t const *>(b));
+    std::size_t const max(std::min(a_size, b_size));
+
+    // skip start as long as equal
+    //
+    std::size_t idx(0);
+    for(; idx < max; ++idx)
+    {
+        if(a_ptr[idx] != b_ptr[idx])
+        {
+            break;
+        }
+    }
+    if(idx > 10)
+    {
+        // adjust pointer to include some equal data and then a multiple of 16
+        //
+        idx -= 10;
+        idx &= -16;
+    }
+    else
+    {
+        idx = 0;
+    }
+
+    // limit the output to 4 lines of data
+    //
+    std::size_t const limit(std::min(idx + 64, max));
+
+    bool err(false);
+    bool first(true);
+    std::cout << std::hex << std::setfill('0');
+    for(; idx < limit; ++idx)
+    {
+        if((idx & 15) == 0)
+        {
+            if(first)
+            {
+                first = false;
+            }
+            else
+            {
+                std::cout << '\n';
+            }
+            std::cout << "\033[0m" << std::setw(8) << idx << "- ";
+            err = false;
+        }
+        if(a_ptr[idx] == b_ptr[idx])
+        {
+            if(err)
+            {
+                err = false;
+                std::cout << "\033[0m";
+            }
+            std::cout << std::setw(2) << a_ptr[idx] << ' ';
+        }
+        else
+        {
+            if(!err)
+            {
+                err = true;
+                std::cout << "\033[7m";
+            }
+            std::cout << '[';
+            std::cout << std::setw(2) << a_ptr[idx];
+            std::cout << '/';
+            std::cout << std::setw(2) << b_ptr[idx];
+            std::cout << "] ";
+        }
+    }
+    if(err)
+    {
+        err = false;
+        std::cout << "\033[0m";
+    }
+
+    std::cout << (limit != max ? "..." : "") << '\n'
+              << "---------------------------------------------------" << std::endl;
+
+    if(a_size > b_size)
+    {
+        std::cout << "Left hand side buffer is longer ("
+                  << a_size
+                  << " versus "
+                  << b_size
+                  << ")."
+                  << std::endl;
+    }
+    else if(b_size > a_size)
+    {
+        std::cout << "Right hand side buffer is longer ("
+                  << a_size
+                  << " versus "
+                  << b_size
+                  << ")."
+                  << std::endl;
+    }
+
+    // to generate the standard error too
+    //
+    CATCH_REQUIRE(!"large buffers a and b differ");
 }
 
 
@@ -1074,6 +1191,7 @@ bool nearly_equal(
             std::cout << "SECTION: " << name << std::endl; \
         }
 
+
 /** \brief End a section.
  *
  * This macro ends a section. The CATCH_START_SECTION() creates a
@@ -1091,18 +1209,57 @@ bool nearly_equal(
  * Here we call our own function which will highlight the problems
  * so that way you can immediately see where the first difference occurs.
  *
- * \note
- * This does not make use of the standard catch environment so it will
- * eventually throw or break in some other ways which may not end up
- * well.
- *
  * \param[in] a  The first string.
  * \param[in] b  The second string.
  */
 #define CATCH_REQUIRE_LONG_STRING(a, b) SNAP_CATCH2_NAMESPACE::catch_compare_long_strings(a, b)
 
 
+/** \brief Require that two long buffers be equal.
+ *
+ * When testing really large buffers, the compare failing lists all the
+ * bytes on each side. By default, Catch will output the complete left
+ * hand side and then the complete right hand side. In most cases, that's
+ * useless if the buffer is in the kilobytes in size.
+ *
+ * This macro calls a function which makes sure to render the bytes next
+ * to each other and shows the erroneous ones highlighter. It also shows
+ * the location inside the buffer as an offset or address.
+ *
+ * If the first error appears way down, then the part that is equal at
+ * the start is skipped. It also only shows the first 64 bytes with the
+ * first few errors. In most cases, fixing that part will be sufficient
+ * to move forward.
+ *
+ * \param[in] a  The first buffer.
+ * \param[in] a_size  The size of the first buffer.
+ * \param[in] b  The second buffer.
+ * \param[in] b_size  The size of the second buffer.
+ */
+#define CATCH_REQUIRE_LARGE_BUFFER(a, a_size, b, b_size) SNAP_CATCH2_NAMESPACE::catch_compare_large_buffers(a, a_size, b, b_size)
 
+
+
+/** \brief Compare two floating points for near equality.
+ *
+ * This macro is a helper which calls our nearly_equal() function with
+ * the default epsilon (1e-5).
+ *
+ * This is useful since comparing floating points with just `==` is
+ * often not a good choice if the math on both sides is not exactly
+ * the same (and then what are we testing?)
+ *
+ * \note
+ * To still use the equivalent of `==`, you can directly call the
+ * nearly_equal() function and set the epsilon to 0.0:
+ *
+ * \code
+ *     SNAP_CATCH2_NAMESPACE::nearly_equal(a, b, 0.0)
+ * \endcode
+ *
+ * \param[in] a  The left hand side floating point to compare.
+ * \param[in] b  The right hand side floating point to compare.
+ */
 #define CATCH_REQUIRE_FLOATING_POINT(a, b) SNAP_CATCH2_NAMESPACE::nearly_equal(a, b)
 
 
