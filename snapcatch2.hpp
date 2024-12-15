@@ -306,30 +306,26 @@ inline char32_t random_char(character_t category)
 {
     constexpr std::size_t const SURROGATES_COUNT(0xE000 - 0xD800);
     char32_t result(U'\0');
+    random(result);
     switch(category)
     {
     case character_t::CHARACTER_ZUNICODE:
-        random(result);
         result %= 0x110000 - SURROGATES_COUNT;
         break;
 
     case character_t::CHARACTER_ZPLAN0:
-        random(result);
         result %= 0x010000 - SURROGATES_COUNT;
         break;
 
     case character_t::CHARACTER_UNICODE:
-        random(result);
         result = result % (0x110000 - SURROGATES_COUNT - 1) + 1;
         break;
 
     case character_t::CHARACTER_PLAN0:
-        random(result);
         result = result % (0x010000 - SURROGATES_COUNT - 1) + 1;
         break;
 
     case character_t::CHARACTER_LETTERS:
-        random(result);
         result = result % (26 * 2) + 'A';
         if(result > 'Z')
         {
@@ -340,7 +336,6 @@ inline char32_t random_char(character_t category)
         break;
 
     case character_t::CHARACTER_ALPHANUMERIC:
-        random(result);
         result = result % (26 * 2 + 10) + '0';
         if(result > '9')
         {
@@ -357,17 +352,14 @@ inline char32_t random_char(character_t category)
         break;
 
     case character_t::CHARACTER_DIGITS:
-        random(result);
         result = result % 10 + '0';
         break;
 
     case character_t::CHARACTER_ASCII:
-        random(result);
         result = result % ('~' - ' ' + 1) + ' ';
         break;
 
     case character_t::CHARACTER_LABEL:
-        random(result);
         result = result % (26 * 2 + 10 + 1) + '0';
         if(result > '9')
         {
@@ -1255,6 +1247,13 @@ bool nearly_equal(
  *
  * \code
  *     SNAP_CATCH2_NAMESPACE::nearly_equal(a, b, 0.0)
+ * \endcode
+ *
+ * \note
+ * Catch2 offers an approximation equality which uses a special literal:
+ *
+ * \code
+ *     CATCH_REQUIRE(a == 1.0_a); // equivalent to Approx(1.0)
  * \endcode
  *
  * \param[in] a  The left hand side floating point to compare.
