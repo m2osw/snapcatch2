@@ -1,3 +1,9 @@
+snapcatch2 (3.8.0.1~bionic) bionic; urgency=high
+
+  * Rebuild newer version since dependency changed.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 19 Jul 2025 21:19:55 -0700
+
 snapcatch2 (3.8.0.0~bionic) bionic; urgency=high
 
   * Upgraded to newest upstream version (3.8.0).
