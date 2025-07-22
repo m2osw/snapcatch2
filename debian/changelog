@@ -1,4 +1,4 @@
-snapcatch2 (3.8.0.1~bionic) bionic; urgency=high
+snapcatch2 (3.8.0.1~noble) noble; urgency=high
 
   * Rebuild newer version since dependency changed.
 
