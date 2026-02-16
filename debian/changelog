@@ -1,3 +1,9 @@
+snapcatch2 (3.13.0.0~noble) noble; urgency=high
+
+  * Update to version 3.13 of Catch2.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 15 Feb 2026 20:12:07 -0800
+
 snapcatch2 (3.12.0.0~noble) noble; urgency=high
 
   * Update to version 3.12 of Catch2.
