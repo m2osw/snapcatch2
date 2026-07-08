@@ -61,8 +61,12 @@
  *
  * CATCH_REQUIRE_FLOATING_POINT(var, 1.0);
  *
- * That require uses our implementation of the compare which is limited
- * to an epsilon variance.
+ * Our implementation makes use of an epsilon variance which you can
+ * specify by using the nearly_equal() function:
+ *
+ * \code
+ * SNAP_CATCH2_NAMESPACE::nearly_equal(a, b, 0.0)
+ * \endcode
  */
 using namespace Catch::literals;
 
