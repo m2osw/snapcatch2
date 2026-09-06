@@ -40,11 +40,13 @@
 #include    <iomanip>
 #include    <iostream>
 #include    <sstream>
+#include    <thread>
 
 
 // C
 //
 #include    <string.h>
+#include    <sys/wait.h>
 #include    <unistd.h>
 
 
@@ -1147,6 +1149,125 @@ bool nearly_equal(
 }
 
 
+/** \brief Run a command with a double pipe.
+ *
+ * For test purposes, especially before the cppprocess availability
+ * (see the eventdispatcher project,) it is at times useful to create
+ * a command to which you send data (\p input) and receive a result
+ * in stdout (the returned value).
+ *
+ * This function creates an stdin and stdout so as to send specific
+ * input and capture the output. The stderr channel is left alone.
+ *
+ * \param[in] command  The command to execute with parameters (i.e. "base64 -d").
+ * \param[in] input  The data to send to the command stdin.
+ *
+ * \return The output of \p command.
+ */
+inline std::string popen2(std::string const & command, std::string const & input)
+{
+    int pipe_in[2], pipe_out[2];
+
+    CATCH_REQUIRE(pipe(pipe_in) == 0);
+    CATCH_REQUIRE(pipe(pipe_out) == 0);
+
+    int const child_pid(fork());
+
+    if(child_pid == 0)
+    {
+        // this is the child -- no CATCH_...() available here
+        //
+        std::vector<std::string> args;
+        std::vector<char *> argv;
+
+        std::string a;
+        for(char const * c(command.c_str()); *c != '\0'; ++c)
+        {
+            // TODO: add support for quotes, at least, to support parameters
+            //       with spaces
+            //
+            if(*c == ' ')
+            {
+                if(!a.empty())
+                {
+                    args.push_back(a);
+                }
+                a.clear();
+            }
+            else
+            {
+                a += *c;
+            }
+        }
+        if(!a.empty())
+        {
+            args.push_back(a);
+        }
+        for(auto const & s : args)
+        {
+            argv.push_back(const_cast<char *>(s.c_str()));
+        }
+        argv.push_back(nullptr);
+
+        close(pipe_in[1]);
+        close(pipe_out[0]);
+
+        dup2(pipe_in[0], STDIN_FILENO);
+        dup2(pipe_out[1], STDOUT_FILENO);
+
+        close(pipe_in[0]);
+        close(pipe_out[1]);
+
+        execvp(argv[0], argv.data());
+        perror("execv()");
+
+        _exit(0); // avoid calling parent's atexit() functions
+    }
+
+    // this is the parent
+    //
+    CATCH_REQUIRE(child_pid != -1);
+
+    close(pipe_in[0]);
+    close(pipe_out[1]);
+
+    ssize_t sz(-1);
+    std::thread writer_thread([&pipe_in, &input, &sz]()
+        {
+            // at the moment we ignore the returned value
+            //
+            sz = write(pipe_in[1], input.data(), input.length());
+            close(pipe_in[1]);
+        });
+
+    int r(0);
+    std::string output;
+    for(;;)
+    {
+        char buf[1024];
+        r = read(pipe_out[0], buf, sizeof(buf));
+        if(r <= 0)
+        {
+            break;
+        }
+        output += std::string(buf, r);
+    }
+    close(pipe_out[0]);
+
+    writer_thread.join();
+
+    int status(0);
+    waitpid(child_pid, &status, 0);
+
+    // any other CATCH needs to be AFTER the waitpid() and join() calls
+    //
+    CATCH_REQUIRE(static_cast<std::size_t>(sz) == input.length());
+    CATCH_REQUIRE(r == 0);
+
+    return output;
+}
+
+
 
 
 
@@ -1323,10 +1444,6 @@ inline ExceptionWatcher ExceptionMessage(std::string const & expected_message, b
 
 
 
-}
-// Matchers namespace
-}
-// Catch namespace
-
-
+} // namespace Matchers
+} // namespace Catch
 // vim: ts=4 sw=4 et
