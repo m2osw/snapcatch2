@@ -177,7 +177,11 @@ that's where I see those files under Ubuntu.
 
 ## Compiler Version
 
-By default it compiles with C++11.
+By default it compiles with C++23.
+
+Before it was possible to specify the compiler with the following, but I
+have not tested such in ages and older versions may generate unexpected
+errors or warnings:
 
 Use `-DUSE_CPP17` to make it compile with C++17.
 
