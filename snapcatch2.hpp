@@ -40,8 +40,12 @@
 #include    <iomanip>
 #include    <iostream>
 #include    <sstream>
-#include    <syncstream>
 #include    <thread>
+
+#if defined(__cpp_lib_syncbuf) && __cpp_lib_syncbuf >= 201803L
+#include <syncstream>
+#define HAS_OSYNCSTREAM
+#endif
 
 
 // C
@@ -1276,7 +1280,11 @@ inline void show_start_section_progress(char const * name, timespec & n)
         return;
     }
 
+#ifdef HAS_OSYNCSTREAM
     std::osyncstream sout(std::cout);
+#else
+    std::ostream & sout(std::cout);
+#endif
     int const r(clock_gettime(CLOCK_REALTIME, &n));
     if(r != 0)
     {
@@ -1308,8 +1316,62 @@ inline void show_start_section_progress(char const * name, timespec & n)
 }
 
 
-inline void show_start_section_progress(char const * name, timespec & n)
+inline void show_end_section_progress(char const * name, timespec s)
 {
+    if(!SNAP_CATCH2_NAMESPACE::g_progress())
+    {
+        return;
+    }
+
+#ifdef HAS_OSYNCSTREAM
+    std::osyncstream sout(std::cout);
+#else
+    std::ostream & sout(std::cout);
+#endif
+    timespec n{};
+    int const r(clock_gettime(CLOCK_REALTIME, &n));
+    if(r != 0)
+    {
+        sout << "<dead-clock>";
+    }
+    else
+    {
+        std::tm date_and_time = {};
+        std::tm * ptr(localtime_r(&n.tv_sec, &date_and_time));
+        if(ptr == nullptr)
+        {
+            sout << "<invalid-timestamp>";
+        }
+        else
+        {
+            char buf[256];
+            std::size_t const sz(strftime(buf, sizeof(buf), "%Y/%m/%d %H:%M:%S", &date_and_time));
+            if(sz == 0)
+            {
+                sout << "<invalid-format>";
+            }
+            else
+            {
+                sout << buf << '.' << std::setw(9) << std::setfill('0') << n.tv_nsec;
+            }
+        }
+    }
+    sout << ": END SECTION: " << name;
+
+    if(r == 0)
+    {
+        s.tv_sec = n.tv_sec - s.tv_sec;
+        s.tv_nsec = n.tv_nsec - s.tv_nsec;
+        if(s.tv_nsec < 0)
+        {
+            s.tv_nsec += 1'000'000'000;
+            --s.tv_sec;
+        }
+
+        sout << " -- duration: " << s.tv_sec << '.' << std::setw(9) << std::setfill('0') << s.tv_nsec;
+    }
+
+    sout << '\n';
 }
 
 
@@ -1344,8 +1406,9 @@ inline void show_start_section_progress(char const * name, timespec & n)
  */
 #define CATCH_START_SECTION(name) CATCH_SECTION(name) \
     { \
-        timespec section_started_on{}; \
-        SNAP_CATCH2_NAMESPACE::show_start_section_progress(#name, section_started_on);
+        char const * const catch_section_name(#name); \
+        timespec catch_section_started_on{}; \
+        SNAP_CATCH2_NAMESPACE::show_start_section_progress(catch_section_name, catch_section_started_on);
 
 
 /** \brief End a section.
@@ -1354,7 +1417,7 @@ inline void show_start_section_progress(char const * name, timespec & n)
  * block which this macro closes.
  */
 #define CATCH_END_SECTION() \
-        SNAP_CATCH2_NAMESPACE::show_end_section_progress(#name, section_started_on); \
+        SNAP_CATCH2_NAMESPACE::show_end_section_progress(catch_section_name, catch_section_started_on); \
     }
 
 
