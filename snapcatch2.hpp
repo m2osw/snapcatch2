@@ -40,6 +40,7 @@
 #include    <iomanip>
 #include    <iostream>
 #include    <sstream>
+#include    <syncstream>
 #include    <thread>
 
 
@@ -82,9 +83,9 @@ using namespace Catch::literals;
  * \code
  *     namespace SNAP_CATCH2_NAMESPACE
  *     {
- *     
+ *
  *     int g_counter = 0;
- *     
+ *
  *     }
  * \endcode
  */
@@ -1268,7 +1269,48 @@ inline std::string popen2(std::string const & command, std::string const & input
 }
 
 
+inline void show_start_section_progress(char const * name, timespec & n)
+{
+    if(!SNAP_CATCH2_NAMESPACE::g_progress())
+    {
+        return;
+    }
 
+    std::osyncstream sout(std::cout);
+    int const r(clock_gettime(CLOCK_REALTIME, &n));
+    if(r != 0)
+    {
+        sout << "<dead-clock>";
+    }
+    else
+    {
+        std::tm date_and_time = {};
+        std::tm * ptr(localtime_r(&n.tv_sec, &date_and_time));
+        if(ptr == nullptr)
+        {
+            sout << "<invalid-timestamp>";
+        }
+        else
+        {
+            char buf[256];
+            std::size_t const sz(strftime(buf, sizeof(buf), "%Y/%m/%d %H:%M:%S", &date_and_time));
+            if(sz == 0)
+            {
+                sout << "<invalid-format>";
+            }
+            else
+            {
+                sout << buf << '.' << std::setw(9) << std::setfill('0') << n.tv_nsec;
+            }
+        }
+    }
+    sout << ": SECTION: " << name << '\n';
+}
+
+
+inline void show_start_section_progress(char const * name, timespec & n)
+{
+}
 
 
 } // SNAP_CATCH2_NAMESPACE namespace
@@ -1300,13 +1342,10 @@ inline std::string popen2(std::string const & command, std::string const & input
  *
  * \param[in] name  The name of the section.
  */
-#define CATCH_START_SECTION(name) \
-    CATCH_SECTION(name) \
+#define CATCH_START_SECTION(name) CATCH_SECTION(name) \
     { \
-        if(SNAP_CATCH2_NAMESPACE::g_progress()) \
-        { \
-            std::cout << "SECTION: " << name << std::endl; \
-        }
+        timespec section_started_on{}; \
+        SNAP_CATCH2_NAMESPACE::show_start_section_progress(#name, section_started_on);
 
 
 /** \brief End a section.
@@ -1315,6 +1354,7 @@ inline std::string popen2(std::string const & command, std::string const & input
  * block which this macro closes.
  */
 #define CATCH_END_SECTION() \
+        SNAP_CATCH2_NAMESPACE::show_end_section_progress(#name, section_started_on); \
     }
 
 
